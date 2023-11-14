@@ -1,60 +1,70 @@
-﻿namespace Maskinskrivning
+﻿using System.Diagnostics;
+
+namespace Maskinskrivning
 {
     internal class Program
     {
         static int score = 0;
+        const int numberRounds = 10;
 
-        static char[] characters = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 
-            'l', 'm', 'n', 'o' , 'p' , 'q' , 'r' , 's' , 't' , 'u' , 'v' , 'w' , 'x', 
+        static char[] characters = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
+            'l', 'm', 'n', 'o' , 'p' , 'q' , 'r' , 's' , 't' , 'u' , 'v' , 'w' , 'x',
             'y', 'z' , 'æ' , 'ø' , 'å' };
 
         static Random rnd = new Random();
 
         static void Main(string[] args)
         {
-            //Console.WriteLine(characters[0]);
-            //Console.WriteLine(characters[characters.Length - 1]);
+            Console.CursorVisible = false;
+            Console.WriteLine("Test your typewriting skills.\n" +
+                "Type the letter as fast as possible.\n\n" +
+                "Press any key to start.");
+            Console.ReadKey(true);
 
-            //TODO Start a timer
-
-            for (int i = 0; i < 10; i++)
+            Stopwatch stopwatch = new();
+            stopwatch.Start();
+            for (int i = 0; i < numberRounds; i++)
             {
                 Start();
             }
+            stopwatch.Stop();
+            Show("Time: " + stopwatch.Elapsed.ToString("mm\\:ss\\.ff"), 10, 15, ConsoleColor.Yellow);
         }
 
         private static void Start()
         {
-            //TODO make char instead of int
-            int i = rnd.Next(characters.Length);
+            char randomChar = characters[rnd.Next(characters.Length)];
+            Show(randomChar, 20, 10);
 
-            //TODO Show letter same place always
-            Console.WriteLine(characters[i]);
-            char c = GetCharInput();
+            char userChar = GetCharInput();
 
-            bool isSame = Compare(characters[i], c);
-
-            if (isSame)
+            if (randomChar == userChar)
             {
-                Console.WriteLine($"Congratz!. They are the same. Score :{++score}");
+                Show("".PadRight(30),10,12);
+                Show($"Congratz!. Score :{++score}", 10, 12, ConsoleColor.Green);
             }
-            //TODO ELSE OH NO!
-        }
-
-        private static bool Compare(char v, char c)
-        {
-            return v == c;
+            else
+            {
+                Show("".PadRight(30), 10, 12);
+                Show($"Wrong! {score}", 10, 12, ConsoleColor.Red);
+            }
         }
 
         private static char GetCharInput()
         {
-            //TODO Dont show char pressed
-            return Console.ReadKey().KeyChar;
+            return Console.ReadKey(true).KeyChar;
         }
 
         //TODO Method for print with location and color
+        static void Show(object text, int x, int y, ConsoleColor color = ConsoleColor.White)
+        {
+            Console.ForegroundColor = color;
+            Console.SetCursorPosition(x, y);
+            Console.Write(text.ToString());
+        }
 
         //TODO method for showing letters already processed.
+
 
     }
 }
