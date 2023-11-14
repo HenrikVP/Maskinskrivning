@@ -4,8 +4,12 @@ namespace Maskinskrivning
 {
     internal class Program
     {
+        //TODO Highscore
+        //TODO method for showing letters already processed.
+
         static int score = 0;
-        const int numberRounds = 10;
+        const int numberRounds = 2;
+        static string[] highScore = new string[10];
 
         static char[] characters = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
             'l', 'm', 'n', 'o' , 'p' , 'q' , 'r' , 's' , 't' , 'u' , 'v' , 'w' , 'x',
@@ -15,56 +19,75 @@ namespace Maskinskrivning
 
         static void Main(string[] args)
         {
+            do
+            {
+                Console.Clear();
+                ShowHighscore();
+                Game();
+                Show("Try again? (Y/N)", 10, 6);
+            }
+            while (Console.ReadKey().Key == ConsoleKey.Y);
+        }
+
+        static void ShowHighscore()
+        {
+            Show("***HIGHSCORE***", 50, 2, ConsoleColor.Cyan);
+            for (int i = 0; i < highScore.Length; i++)
+            {
+                if (highScore[i] != null)
+                    Show(highScore[i], 50, 4 + i, ConsoleColor.Cyan);
+            }
+        }
+
+        static void Game()
+        {
+            score = 0;
             Console.CursorVisible = false;
-            Console.WriteLine("Test your typewriting skills.\n" +
+            Show("Test your typewriting skills.\n" +
                 "Type the letter as fast as possible.\n\n" +
-                "Press any key to start.");
+                "Press any key to start.", 1, 2);
             Console.ReadKey(true);
+            Console.Clear();
+            ShowHighscore();
 
             Stopwatch stopwatch = new();
             stopwatch.Start();
             for (int i = 0; i < numberRounds; i++)
             {
-                Start();
+                Start(i);
             }
             stopwatch.Stop();
-            Show("Time: " + stopwatch.Elapsed.ToString("mm\\:ss\\.ff"), 10, 15, ConsoleColor.Yellow);
+
+            string timer = stopwatch.Elapsed.ToString(@"mm\:ss\.ff");
+            //TODO Is score REALLY a highscore???
+            highScore[0] = timer;
+
+            Show("Time: " + timer, 10, 5, ConsoleColor.Yellow);
         }
 
-        private static void Start()
+        static void Start(int i)
         {
             char randomChar = characters[rnd.Next(characters.Length)];
-            Show(randomChar, 20, 10);
+            Show(randomChar, 10 + i * 2, 3);
 
             char userChar = GetCharInput();
 
             if (randomChar == userChar)
-            {
-                Show("".PadRight(30),10,12);
-                Show($"Congratz!. Score :{++score}", 10, 12, ConsoleColor.Green);
-            }
+                Show($"Congratz! Score :{++score}".PadRight(10), 10, 4, ConsoleColor.Green);
             else
-            {
-                Show("".PadRight(30), 10, 12);
-                Show($"Wrong! {score}", 10, 12, ConsoleColor.Red);
-            }
+                Show($"Wrong! Score :{score}".PadRight(10), 10, 4, ConsoleColor.Red);
         }
 
-        private static char GetCharInput()
+        static char GetCharInput()
         {
             return Console.ReadKey(true).KeyChar;
         }
 
-        //TODO Method for print with location and color
         static void Show(object text, int x, int y, ConsoleColor color = ConsoleColor.White)
         {
             Console.ForegroundColor = color;
             Console.SetCursorPosition(x, y);
             Console.Write(text.ToString());
         }
-
-        //TODO method for showing letters already processed.
-
-
     }
 }
