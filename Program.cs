@@ -6,7 +6,6 @@ namespace Maskinskrivning
     {
         //TODO Highscore
         //TODO method for showing letters already processed.
-
         static int score = 0;
         const int numberRounds = 2;
         static string[] highScore = new string[10];
@@ -45,10 +44,11 @@ namespace Maskinskrivning
             Console.CursorVisible = false;
             Show("Test your typewriting skills.\n" +
                 "Type the letter as fast as possible.\n\n" +
-                "Press any key to start.", 1, 2);
+                "Press any key to start.", 0, 2);
             Console.ReadKey(true);
             Console.Clear();
             ShowHighscore();
+
 
             Stopwatch stopwatch = new();
             stopwatch.Start();
@@ -60,22 +60,33 @@ namespace Maskinskrivning
 
             string timer = stopwatch.Elapsed.ToString(@"mm\:ss\.ff");
             //TODO Is score REALLY a highscore???
-            highScore[0] = timer;
+
+            AddToHighScore(score);
 
             Show("Time: " + timer, 10, 5, ConsoleColor.Yellow);
+        }
+
+        static void AddToHighScore(int score)
+        {
+
+            
         }
 
         static void Start(int i)
         {
             char randomChar = characters[rnd.Next(characters.Length)];
+
+            Stopwatch keyStopWatch = new();
+            keyStopWatch.Start();
             Show(randomChar, 10 + i * 2, 3);
 
             char userChar = GetCharInput();
-
+            keyStopWatch.Stop();
+            score += Math.Max(0, 3000 - (int)keyStopWatch.ElapsedMilliseconds);
             if (randomChar == userChar)
-                Show($"Congratz! Score :{++score}".PadRight(10), 10, 4, ConsoleColor.Green);
+                Show($"Congratz! Score :{score}".PadRight(30), 10, 4, ConsoleColor.Green);
             else
-                Show($"Wrong! Score :{score}".PadRight(10), 10, 4, ConsoleColor.Red);
+                Show($"Wrong! Score :{score}".PadRight(30), 10, 4, ConsoleColor.Red);
         }
 
         static char GetCharInput()
