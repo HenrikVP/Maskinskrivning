@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Xml.Serialization;
 
 namespace Maskinskrivning
 {
@@ -18,6 +19,7 @@ namespace Maskinskrivning
 
         static void Main(string[] args)
         {
+            highScore = Io.LoadHighscore();
             do
             {
                 Console.Clear();
@@ -79,7 +81,9 @@ namespace Maskinskrivning
             if (!isHighScore) return;
 
             highScore[0] = newScore;
-            Array.Sort(highScore); 
+            Array.Sort(highScore);
+            //TODO Save New Highscore
+            Io.SaveHighScore(highScore);
         }
 
         static void Start(int i)
@@ -92,7 +96,7 @@ namespace Maskinskrivning
 
             char userChar = GetCharInput();
             keyStopWatch.Stop();
-            
+
             if (randomChar == userChar)
             {
                 score += Math.Max(0, 3000 - (int)keyStopWatch.ElapsedMilliseconds);
