@@ -8,7 +8,7 @@ namespace Maskinskrivning
         //TODO method for showing letters already processed.
         static int score = 0;
         const int numberRounds = 2;
-        static string[] highScore = new string[10];
+        static int[] highScore = new int[10];
 
         static char[] characters = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
             'l', 'm', 'n', 'o' , 'p' , 'q' , 'r' , 's' , 't' , 'u' , 'v' , 'w' , 'x',
@@ -34,7 +34,7 @@ namespace Maskinskrivning
             for (int i = 0; i < highScore.Length; i++)
             {
                 if (highScore[i] != null)
-                    Show(highScore[i], 50, 4 + i, ConsoleColor.Cyan);
+                    Show(highScore[i], 50, 14 - i, ConsoleColor.Cyan);
             }
         }
 
@@ -49,7 +49,6 @@ namespace Maskinskrivning
             Console.Clear();
             ShowHighscore();
 
-
             Stopwatch stopwatch = new();
             stopwatch.Start();
             for (int i = 0; i < numberRounds; i++)
@@ -59,17 +58,28 @@ namespace Maskinskrivning
             stopwatch.Stop();
 
             string timer = stopwatch.Elapsed.ToString(@"mm\:ss\.ff");
-            //TODO Is score REALLY a highscore???
 
             AddToHighScore(score);
 
             Show("Time: " + timer, 10, 5, ConsoleColor.Yellow);
         }
 
-        static void AddToHighScore(int score)
+        static void AddToHighScore(int newScore)
         {
+            bool isHighScore = false;
+            foreach (var score in highScore)
+            {
+                if (newScore > score)
+                {
+                    isHighScore = true;
+                    break;
+                }
+            }
 
-            
+            if (!isHighScore) return;
+
+            highScore[0] = newScore;
+            Array.Sort(highScore); 
         }
 
         static void Start(int i)
@@ -82,9 +92,13 @@ namespace Maskinskrivning
 
             char userChar = GetCharInput();
             keyStopWatch.Stop();
-            score += Math.Max(0, 3000 - (int)keyStopWatch.ElapsedMilliseconds);
+            
             if (randomChar == userChar)
+            {
+                score += Math.Max(0, 3000 - (int)keyStopWatch.ElapsedMilliseconds);
                 Show($"Congratz! Score :{score}".PadRight(30), 10, 4, ConsoleColor.Green);
+            }
+
             else
                 Show($"Wrong! Score :{score}".PadRight(30), 10, 4, ConsoleColor.Red);
         }
